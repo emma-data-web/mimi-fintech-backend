@@ -1,4 +1,4 @@
-dev.env
+app/.env
 
 
 __pycache__/
