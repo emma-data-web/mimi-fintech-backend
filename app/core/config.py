@@ -7,6 +7,7 @@ class Settings(BaseSettings):
   SECRET_KEY: str
   JWT_ALGORITHM: str
   ACESS_TOKEN_EXPIRE_MINUTE: int = 30
+  RESET_PASSWORD_TOKEN_EXPIRE_MINUTE: int = 5
 
 
   class Config:
