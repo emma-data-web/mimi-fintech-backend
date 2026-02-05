@@ -5,8 +5,6 @@ from app.db.base import base
 from app.routers.auth import Auth_router
 
 
-base.metadata.create_all(bind=engine)
-
 
 app = FastAPI(
   title="mnyi fintech backend",

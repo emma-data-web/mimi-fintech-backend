@@ -18,7 +18,17 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+
+
+from dotenv import load_dotenv
+import os
+from app.db.base import base
+from app.models.user import User
+load_dotenv()  
+
+config.set_main_option("sqlalchemy.url", os.getenv("DATABASE_URL"))
+
+target_metadata = base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

@@ -5,7 +5,7 @@ from datetime import datetime
 
 
 class User(base):
-  __table__ = "users"
+  __tablename__ = "users"
 
   id = Column(Integer, primary_key=True)
   first_name = Column(String)
@@ -19,4 +19,4 @@ class User(base):
   created_at = Column(DateTime, default = datetime.utcnow)
 
 
-  account = relationship("Account", back_populates="owner", uselist=False)
+  #account = relationship("Account", back_populates="owner", uselist=False)

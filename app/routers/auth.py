@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 Auth_router = APIRouter()
 
-Auth_router.post("/register")
+@Auth_router.post("/register")
 def register_user(user: CreateUser, db: Session = Depends(get_db)):
 
   create_user(user=user, db=db)
