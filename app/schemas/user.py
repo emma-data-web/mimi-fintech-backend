@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-#from datetime import datetime
+
 
 
 class CreateUser(BaseModel):
@@ -17,3 +17,14 @@ class CreateUser(BaseModel):
 class CreateUserOut(BaseModel):
   id : int
   email: EmailStr
+
+
+
+class UserLogin(BaseModel):
+  email : EmailStr
+  password : str
+
+
+class UserLoginResponse(BaseModel):
+  access_token: str
+  token_type: str = "bearer"
