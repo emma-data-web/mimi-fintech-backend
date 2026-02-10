@@ -24,6 +24,7 @@ from dotenv import load_dotenv
 import os
 from app.db.base import base
 from app.models.user import User
+from app.models.wallet import Wallet
 load_dotenv()  
 
 config.set_main_option("sqlalchemy.url", os.getenv("DATABASE_URL"))

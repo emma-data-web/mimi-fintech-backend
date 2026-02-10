@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.db.session import engine
 from app.db.base import base
 from app.routers.auth import Auth_router
+from app.routers.wallet import Wallet_router
 
 
 
@@ -22,3 +23,5 @@ app.add_middleware(
 
 
 app.include_router(Auth_router, prefix="/api/v1/auth", tags=["Authentication"])
+
+app.include_router(Wallet_router, prefix="/api/v1/wallet", tags=["Wallet-System"])

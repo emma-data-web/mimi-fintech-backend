@@ -5,12 +5,12 @@ from datetime import datetime
 import uuid
 
 class Wallet(base):
-  __table_name__ = "wallets"
+  __tablename__ = "wallets"
 
   wallet_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
   user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
   balance = Column(Float, nullable=False)
-  currency = Column(String)
+  currency = Column(String, default= "NGN")
   created_at = Column(DateTime, default=datetime.utcnow)
 
   transactions = relationship("Transaction", back_populates="wallets", uselist=False)
