@@ -23,4 +23,7 @@ def create_wallet(user: WalletCreate, db: Session):
   db.refresh(new_wallet)
 
 
-  
+  return new_wallet
+
+
+

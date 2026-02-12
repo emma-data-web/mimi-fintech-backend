@@ -3,6 +3,8 @@ from sqlalchemy.orm import relationship
 from app.db.base import base
 from datetime import datetime
 import uuid
+from app.models.user import User
+from app.models.transaction import Transaction
 
 class Wallet(base):
   __tablename__ = "wallets"
@@ -13,4 +15,8 @@ class Wallet(base):
   currency = Column(String, default= "NGN")
   created_at = Column(DateTime, default=datetime.utcnow)
 
-  transactions = relationship("Transaction", back_populates="wallets", uselist=False)
+
+  user = relationship("User", back_populates="wallet")
+
+
+  transactions = relationship("Transaction", back_populates="wallet")

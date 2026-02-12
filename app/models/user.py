@@ -19,4 +19,4 @@ class User(base):
   created_at = Column(DateTime, default = datetime.utcnow)
 
 
-  wallets = relationship("Wallet", back_populates="users", uselist=False)
+  wallet = relationship("Wallet", back_populates="user")

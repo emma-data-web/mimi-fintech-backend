@@ -9,7 +9,7 @@ class Transaction(base):
   __tablename__ = "transactions"
 
   id = Column(Integer, primary_key=True)
-  wallet_id = Column(Integer, ForeignKey("wallets.id"))
+  wallet_id = Column(Integer, ForeignKey("wallets.wallet_id"))
   amount = Column(Float, nullable=False)
   type  = Column(String)
   status = Column(String)

@@ -11,4 +11,6 @@ Wallet_router = APIRouter()
 @Wallet_router.post("/create-wallet")
 def wallet_creation(user: WalletCreate, db: Session = Depends(get_db)):
 
-  create_wallet(user=user, db=db)
+  return create_wallet(user=user, db=db)
+
+  
