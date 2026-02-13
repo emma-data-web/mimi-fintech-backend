@@ -1,6 +1,6 @@
 from app.models.wallet import Wallet
 from app.models.user import User
-from app.schemas.wallet import WalletCreate, CreditWallet
+from app.schemas.wallet import WalletCreate, CreditWallet, DebitWallet
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 
@@ -50,3 +50,23 @@ def credit_wallet(user: CreditWallet, db: Session):
   db.refresh(existing_wallet)
 
   return existing_wallet
+
+
+def debit_wallet(user: DebitWallet, db: Session):
+  existing_user = db.query(User).filter(User.id == user.user_id).first()
+
+  existing_wallet = db.query(Wallet).filter(Wallet.wallet_id == user.wallet_id).first()
+
+  if not existing_user: 
+    raise HTTPException(status_code=404, detail="user not found")
+  
+  if not existing_wallet:
+    raise HTTPException(status_code=404, detail="wallet does not exist")
+  
+  if existing_wallet.balance <= user.amount_to_be_transfered:
+    raise HTTPException(status_code=403, detail="insufficient balance!")
+  
+  existing_wallet.balance -= user.amount_to_be_transfered
+
+  db.commit()
+  db.refresh()
