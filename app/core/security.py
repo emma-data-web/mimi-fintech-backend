@@ -1,9 +1,13 @@
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status,Depends
 from passlib.context import CryptContext
 from fastapi.security import HTTPBearer
 from app.core.config import Settings
+from fastapi.security import HTTPAuthorizationCredentials
+from app.dependecies import get_db
+from sqlalchemy.ext.asyncio import AsyncSession
+
 
 
 pwd_content = CryptContext(
@@ -105,8 +109,37 @@ def create_password_reset_token(user_id: int) -> str:
     encoded_jwt = jwt.encode(to_encode, Settings.SECRET_KEY, algorithm=Settings.JWT_ALGORITHM)
     return encoded_jwt
 
-
-
-
-
 bearer_scheme = HTTPBearer()
+
+   
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+    db: AsyncSession = Depends(get_db)
+):
+    token = credentials.credentials
+
+    try:
+        payload = jwt.decode(
+            token,
+            Settings.SECRET_KEY,
+            algorithms=[Settings.JWT_ALGORITHM]
+        )
+
+        user_id = payload.get("sub")
+
+        if user_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid authentication token",
+            )
+
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token",
+        )
+
+    return await user_id
+
+
+
