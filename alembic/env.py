@@ -27,7 +27,16 @@ from app.models.user import User
 from app.models.wallet import Wallet
 load_dotenv()  
 
-config.set_main_option("sqlalchemy.url", os.getenv("DATABASE_URL"))
+database_url = os.getenv("DATABASE_URL")
+
+if database_url.startswith("sqlite+aiosqlite"):
+    database_url = database_url.replace(
+        "sqlite+aiosqlite",
+        "sqlite",
+        1,
+    )
+
+config.set_main_option("sqlalchemy.url", database_url)
 
 target_metadata = base.metadata
 

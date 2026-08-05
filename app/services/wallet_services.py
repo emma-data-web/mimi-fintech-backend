@@ -1,13 +1,14 @@
 from app.models.wallet import Wallet
 from app.models.user import User
 from app.schemas.wallet import WalletCreate, CreditWallet, DebitWallet
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
+from sqlalchemy import select
 
 
 
-def create_wallet(user: WalletCreate, db: Session):
-  existing_wallet_owner = db.query(User).filter(User.id == user.user_id).first()
+async def create_wallet(user: WalletCreate, db: AsyncSession):
+  existing_wallet_owner = (await db.execute(select(User).where(User.id == user.user_id))).scalar_one_or_none()
 
   if not existing_wallet_owner:
     raise HTTPException(status_code=401, detail="user not found")
@@ -19,17 +20,17 @@ def create_wallet(user: WalletCreate, db: Session):
 
 
   db.add(new_wallet)
-  db.commit()
-  db.refresh(new_wallet)
+  await db.commit()
+  await db.refresh(new_wallet)
 
 
   return new_wallet
 
 
-def credit_wallet(user: CreditWallet, db: Session):
-  existing_user = db.query(User).filter(User.id == user.user_id).first()
+async def credit_wallet(user: CreditWallet, db: AsyncSession):
+  existing_user =(await db.execute(select(User).where(User.id == user.user_id))).scalar_one_or_none()
 
-  existing_wallet = db.query(Wallet).filter(Wallet.wallet_id == user.wallet_id).first()
+  existing_wallet = (await db.execute(select(Wallet).where(Wallet.wallet_id == user.wallet_id))).scalar_one_or_none()
 
   if not existing_user:
     raise HTTPException(status_code=404, detail="User not found!")
@@ -46,16 +47,16 @@ def credit_wallet(user: CreditWallet, db: Session):
   existing_wallet.balance += user.amount
 
 
-  db.commit()
-  db.refresh(existing_wallet)
+  await db.commit()
+  await db.refresh(existing_wallet)
 
   return existing_wallet
 
 
-def debit_wallet(user: DebitWallet, db: Session):
-  existing_user = db.query(User).filter(User.id == user.user_id).first()
+async def debit_wallet(user: DebitWallet, db: AsyncSession):
+  existing_user = (await db.execute(select(User).where(User.id == user.user_id))).scalar_one_or_none()
 
-  existing_wallet = db.query(Wallet).filter(Wallet.wallet_id == user.wallet_id).first()
+  existing_wallet = (await db.execute(select(Wallet).where(Wallet.wallet_id == user.wallet_id))).scalar_one_or_none()
 
   if not existing_user: 
     raise HTTPException(status_code=404, detail="user not found")
@@ -68,5 +69,5 @@ def debit_wallet(user: DebitWallet, db: Session):
   
   existing_wallet.balance -= user.amount_to_be_transfered
 
-  db.commit()
-  db.refresh()
+  await db.commit()
+  await db.refresh()

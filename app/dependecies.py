@@ -1,13 +1,10 @@
 from app.db.session import SessionLocal
 
 
-def get_db():
-  db = SessionLocal()
-  try:
-    
-    yield db
+async def get_db():
 
-  finally:
-    db.close()
+    async with SessionLocal() as db:
+
+        yield db
 
 

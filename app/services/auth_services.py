@@ -1,12 +1,13 @@
 from app.core.security import create_access_token, harsh_password, verify_password
 from app.models.user import User
 from app.schemas.user import CreateUser, CreateUserOut, UserLogin, UserLoginResponse
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
+from sqlalchemy import select
 
 
-def create_user(user: CreateUser, db: Session):
-  exiting_user = db.query(User).filter(User.email == user.email).first()
+async def create_user(user: CreateUser, db: AsyncSession):
+  exiting_user = (await db.execute(select(User).where(User.email == user.email))).scalar_one_or_none()
 
   if exiting_user:
     raise HTTPException(status_code=400, detail="user alreeady exists")
@@ -24,14 +25,14 @@ def create_user(user: CreateUser, db: Session):
 
 
   db.add(new_user)
-  db.commit()
-  db.refresh(new_user)
+  await db.commit()
+  await db.refresh(new_user)
 
 
 
 
-def user_login(user: UserLogin, db: Session):
-  existing_user = db.query(User).filter(User.email == user.email).first()
+async def user_login(user: UserLogin, db: AsyncSession):
+  existing_user = (await db.execute(select(User).where(User.email == user.email))).scalar_one_or_none()
 
   if not existing_user:
       raise HTTPException(status_code=401, detail="Invalid email or password")
