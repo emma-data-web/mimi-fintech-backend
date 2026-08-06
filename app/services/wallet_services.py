@@ -8,7 +8,7 @@ from app.core.security import get_current_user
 
 
 
-async def create_wallet(user: WalletCreate, db: AsyncSession, current_user: User = Depends(get_current_user)):
+async def create_wallet(user: WalletCreate, db: AsyncSession, current_user: User):
   existing_wallet_owner = (await db.execute(select(User).where(User.id == user.user_id))).scalar_one_or_none()
 
 
@@ -16,7 +16,7 @@ async def create_wallet(user: WalletCreate, db: AsyncSession, current_user: User
     raise HTTPException(status_code=401, detail="user not found")
 
   if user.user_id != current_user.id:
-    raise HTTPException(status_code=403, details="not authorized")
+    raise HTTPException(status_code=403, detail="not authorized")
   
   new_wallet = Wallet(
     user_id = user.user_id,
@@ -32,7 +32,7 @@ async def create_wallet(user: WalletCreate, db: AsyncSession, current_user: User
   return new_wallet
 
 
-async def credit_wallet(user: CreditWallet, db: AsyncSession, current_user: User = Depends(get_current_user)):
+async def credit_wallet(user: CreditWallet, db: AsyncSession, current_user: User ):
   existing_user =(await db.execute(select(User).where(User.id == user.user_id))).scalar_one_or_none()
 
   existing_wallet = (await db.execute(select(Wallet).where(Wallet.wallet_id == user.wallet_id))).scalar_one_or_none()
@@ -61,11 +61,13 @@ async def credit_wallet(user: CreditWallet, db: AsyncSession, current_user: User
   return existing_wallet
 
 
-async def debit_wallet(user: DebitWallet, db: AsyncSession):
+async def debit_wallet(user: DebitWallet, db: AsyncSession,current_user: User):
   existing_user = (await db.execute(select(User).where(User.id == user.user_id))).scalar_one_or_none()
 
   existing_wallet = (await db.execute(select(Wallet).where(Wallet.wallet_id == user.wallet_id))).scalar_one_or_none()
-
+  if existing_user.id != current_user.id:
+    raise HTTPException(status_code=403, details= "not arthorised")
+  
   if not existing_user: 
     raise HTTPException(status_code=404, detail="user not found")
   
