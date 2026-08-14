@@ -1,6 +1,6 @@
 # Mimi Fintech Backend
 
-A fintech backend API built with **FastAPI**, following modern Python development practices using **Poetry** for dependency management and **Alembic** for database migrations.
+A fintech backend API built with FastAPI, following modern Python development practices using **Poetry** for dependency management and **Alembic** for database migrations.
 
 
 
